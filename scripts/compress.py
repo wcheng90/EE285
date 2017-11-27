@@ -25,13 +25,15 @@ for line in lines:
 		f.write("static char *header_data_compressed =" + "\n")
 		begin_compress = True
 	else:
-		while line[i] != "\"":
-			i += 1
-		i += 1
-		while line[i] != "\"":
-			line_buffer += line[i]
-			i += 1
-print(line_buffer)
+		if line != "\t\"\";\n": #ignores last line
+			while line[i] != "\"":
+				i += 1
+			i += 1 # Moves pointer past the double quotes
+			#print len(line)
+			while i < len(line) - 2: # Don't want to rewrite new line or
+				line_buffer += line[i]
+				i += 1
+#print(line_buffer)
 j = 0 
 last_color = ""
 line_output = ""
