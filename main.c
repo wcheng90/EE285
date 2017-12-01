@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-
+//test
 // Tock API
 #include <led.h>
 #include <timer.h>
@@ -11,7 +11,8 @@
 //#include "images/test.h"
 //#include "images/flownew.h"
 //include "images/simpson.h"
-#include "images/thesimpsonsdarker.h"
+//#include "images/thesimpsonsdarker.h"
+#include "scripts/test_compressed.h"
 
 // Number of active pixels on the Dotstar LED strip.
 // You may need to decrease this number if your power supply is not strong
@@ -194,17 +195,65 @@ static void update_strip(void) {
 
 Color image_rect[100][100];
 
+void extract(char compressed_image[], Color extracted_image[100][100]) {
+	int i = 0; //i forms the horizontal rows of extracted image
+	int j = 0; //j forms the vertical columns of extracted image
+	int k = 0; //k iterates through compressed image data
+	int pixel_repeat_cnt;
+	char current_pixel[4];
+	while (k < sizeof(compressed_image)){
+		uint8_t pixel_data[3] = {0,0,0};
+// Handles pixels with repetitions
+		if (compressed_image[k+4] = " "){
+			pixel_repeat_cnt = (compressed_image[k+5] << 8) | (compressed_image[k+6] << 4) | (compressed_image[k+7]);
+			for (int g = 1; g <= pixel_repeat_cnt; g++){
+			current_pixel = {compressed_image[k],compressed_image[k+1],compressed_image[k+2], compressed_image[k+3]};
+			HEADER_PIXEL(current , pixel_data);
+//				HEADER_PIXEL(compressed_image[k] & compressed_image[k+1] & compressed_image[k+2] & compressed_image[k+3], pixel_data);
+				extracted_image[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);			
+				if (i < 100){
+					j += 1;
+					i = 0;
+				}
+				else{
+					i += 1;
+				}
+			}
+			k += 8; // Skip over color and value field
+		} 
+// Handles single pixels
+		else {
+			current_pixel = {compressed_image[k],compressed_image[k+1],compressed_image[k+2], compressed_image[k+3]};
+			HEADER_PIXEL(current , pixel_data);
+//			HEADER_PIXEL(compressed_image[k] & compressed_image[k+1] & compressed_image[k+2] & compressed_image[k+3], pixel_data);
+			extracted_image[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);			
+			if (i < 100){
+				j += 1;
+				i = 0;
+			}
+			else{
+				i += 1;
+			}
+			k += 4; // Skip to next color
+		}
+	}
+}
+			
+				  
+	
+/*
 void populate_rect(void)  {
 	uint8_t pixel_data[3];
 	for (int i = 0; i < 100; i++) {  //i forms the horizontal rows of the image
 		for (int j = 0; j < 100; j++) {   //j forms the vertical columns
 			HEADER_PIXEL(header_data, pixel_data);
 //			image_rect[i][j] = color(pixel_data[0], pixel_data[1], pixel_data[2]);
-			image_rect[i][j] = color(pixel_data[0]>>2, pixel_data[1]>>2, pixel_data[2]>>2);
+//			image_rect[i][j] = color(pixel_data[0]>>2, pixel_data[1]>>2, pixel_data[2]>>2);
 			image_rect[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);
 		}
 	}
-	}	
+	}
+*/	
 
 #define PI 3.14159265
 double radian_interval = (2*PI)/512;
@@ -223,7 +272,8 @@ void rect_to_polar(void){
 
 
 void animation_init(void) {
-	populate_rect();
+	extract(header_data_compressed, image_rect);
+//	populate_rect();
 
 	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){
 		animation_data[i] = 0x0;
