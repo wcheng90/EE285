@@ -12,7 +12,8 @@
 //#include "images/flownew.h"
 //#include "images/simpson.h"
 //#include "images/thesimpsonsdarker.h"
-#include "scripts/test_compressed.h"
+//#include "scripts/test_compressed.h"
+#include "scripts/simpson100x100darker_compressed.h"
 
 // Number of active pixels on the Dotstar LED strip.
 // You may need to decrease this number if your power supply is not strong
@@ -205,7 +206,8 @@ void extract(char compressed_image[]) {
 	Color extracted_image[100][100];
 //	while (k < (sizeof(compressed_image)/sizeof(compressed_image[0])) || j == 100){
 //	while (i < 100){ //k <= 32){
-	while (k + 7 < 40 && i < 100){
+//	while (k + 7 < 40 && i < 100){
+	while (i < 100){
 		uint8_t pixel_data[3] = {128,128,128};
 // Handles pixels with repetitions
 //		if (compressed_image[0] == 0x58){
@@ -259,7 +261,41 @@ void extract(char compressed_image[]) {
 			} 
 
 			k += 4; // Skip to next color
-
+/*
+set_pixel(0, sizeof(compressed_image) & 0x00000001); 
+set_pixel(1, (sizeof(compressed_image) & 0x00000002) >> 1); 
+set_pixel(2, (sizeof(compressed_image) & 0x00000004) >> 2); 
+set_pixel(3, (sizeof(compressed_image) & 0x00000008) >> 3); 
+set_pixel(4, (sizeof(compressed_image) & 0x00000010) >> 4); 
+set_pixel(5, (sizeof(compressed_image) & 0x00000020) >> 5); 
+set_pixel(6, (sizeof(compressed_image) & 0x00000040) >> 6); 
+set_pixel(7, (sizeof(compressed_image) & 0x00000080) >> 7); 
+set_pixel(8, (sizeof(compressed_image) & 0x00000001) >> 8); 
+set_pixel(9, (sizeof(compressed_image) & 0x00000002) >> 9); 
+set_pixel(10, (sizeof(compressed_image) & 0x00000004) >> 10); 
+set_pixel(11, (sizeof(compressed_image) & 0x00000008) >> 11); 
+set_pixel(12, (sizeof(compressed_image) & 0x00000010) >> 12); 
+set_pixel(13, (sizeof(compressed_image) & 0x00000020) >> 13); 
+set_pixel(14, (sizeof(compressed_image) & 0x00000040) >> 14); 
+set_pixel(15, (sizeof(compressed_image) & 0x00000080) >> 15); 
+set_pixel(16, sizeof(compressed_image[0]) & 0x00000001); 
+set_pixel(17, (sizeof(compressed_image[0]) & 0x00000002) >> 1); 
+set_pixel(18, (sizeof(compressed_image[0]) & 0x00000004) >> 2); 
+set_pixel(19, (sizeof(compressed_image[0]) & 0x00000008) >> 3); 
+set_pixel(20, (sizeof(compressed_image[0]) & 0x00000010) >> 4); 
+set_pixel(21, (sizeof(compressed_image[0]) & 0x00000020) >> 5); 
+set_pixel(22, (sizeof(compressed_image[0]) & 0x00000040) >> 6); 
+set_pixel(23, (sizeof(compressed_image[0]) & 0x00000080) >> 7); 
+set_pixel(24, (sizeof(compressed_image[0]) & 0x00000001) >> 8); 
+set_pixel(25, (sizeof(compressed_image[0]) & 0x00000002) >> 9); 
+set_pixel(26, (sizeof(compressed_image[0]) & 0x00000004) >> 10); 
+set_pixel(27, (sizeof(compressed_image[0]) & 0x00000008) >> 11); 
+set_pixel(28, (sizeof(compressed_image[0]) & 0x00000010) >> 12); 
+set_pixel(29, (sizeof(compressed_image[0]) & 0x00000020) >> 13); 
+set_pixel(30, (sizeof(compressed_image[0]) & 0x00000040) >> 14); 
+set_pixel(31, (sizeof(compressed_image[0]) & 0x00000080) >> 15); 
+update_strip();
+*/
 /*
 set_pixel(0, compressed_image[5] & 0x00000001); 
 set_pixel(1, (compressed_image[5] & 0x00000002) >> 1); 
