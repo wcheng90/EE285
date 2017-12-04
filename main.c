@@ -211,7 +211,7 @@ void extract(char compressed_image[]) {
 //		if (compressed_image[0] == 0x58){
 		if (compressed_image[k+4] == 0x20){
 
-			pixel_repeat_cnt = (compressed_image[5] << 8) | (compressed_image[6]); //| (compressed_image[6] << 4) | (compressed_image[7]);
+			pixel_repeat_cnt = (compressed_image[k+5] << 8) | (compressed_image[k+6]); //| (compressed_image[6] << 4) | (compressed_image[7]);
 			for (int g = 1; g <= pixel_repeat_cnt; g++){
 				current_pixel[0] = compressed_image[k];
 				current_pixel[1] = compressed_image[k+1];
@@ -236,7 +236,7 @@ void extract(char compressed_image[]) {
 				}
 			}
 */
-			k += 8; // Skip over color and value field
+			k += 7; // Skip over color and value field
 		} 
 // Handles single pixels
 		else {
