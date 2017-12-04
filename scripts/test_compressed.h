@@ -11,4 +11,4 @@ pixel[1] = ((((data[1] - 33) & 0xF) << 4) | ((data[2] - 33) >> 2)); \
 pixel[2] = ((((data[2] - 33) & 0x3) << 6) | ((data[3] - 33))); \
 }
 static char *header_data_compressed =
-"`Q!! \x0c\xF3!.UC \x00\x64!0]! \x0c\x80)NU! \x00\x64`Q!! \x0c\xe4";
+"!!$` \xc\xe4!.UC \x0\x64!0]! \xc\x80)NU! \x0\x64`Q!! \xc\xe4";

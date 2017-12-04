@@ -20,7 +20,8 @@ line_buffer = ""
 for line in lines:
 	i = 0
 	if line != "static char *header_data =" + "\n" and begin_compress == False:
-		f.write(line)
+		if line != "data += 4; \\" + "\n":
+ 			f.write(line)
 	elif line == "static char *header_data =" + "\n":
 		f.write("static char *header_data_compressed =" + "\n")
 		begin_compress = True
@@ -46,13 +47,16 @@ while j < len(line_buffer):
 	else: # Save the last color to line_output and reset the color count if new color
 		if color_count > 1:
 			line_output += last_color 
-			if len(hex(color_count)) < 5:
-				if len(hex(color_count)) == 4:
-					color_count_hex = " 0" + str(hex(color_count)[2:])
-				else: #Length is three here
-					color_count_hex = " 00" + str(hex(color_count)[2:])
-			else:
-				color_count_hex = " " + str(hex(color_count)[2:])
+			if len(hex(color_count)) == 6: # Four hex digits
+				color_count_hex = " \\x" + str(hex(color_count)[2:4]) + "\\x" + str(hex(color_count)[4:6])
+			elif len(hex(color_count)) == 5: # Three hex digits
+				color_count_hex = " \\x" + str(hex(color_count)[2:3]) + "\\x" + str(hex(color_count)[3:5])
+			elif len(hex(color_count)) == 4: # Two hex digits
+				color_count_hex = " \\x0\\x" + str(hex(color_count)[2:4])
+			elif len(hex(color_count)) == 3: # One hex digit
+				color_count_hex = " \\x0\\x" + str(hex(color_count)[2:3])
+			else: # Not a valid state
+				color_count_hex = "ERROR"
 			line_output += color_count_hex
 		else:
 			line_output += last_color 
@@ -62,17 +66,20 @@ while j < len(line_buffer):
 # Last iteration of loop needs to written
 if color_count > 1:
 	line_output += last_color 
-	if len(hex(color_count)) < 5:
-		if len(hex(color_count)) == 4:
-			color_count_hex = " 0" + str(hex(color_count)[2:])
-		else: #Length is three here
-			color_count_hex = " 00" + str(hex(color_count)[2:])
-	else:
-		color_count_hex = " " + str(hex(color_count)[2:])
+	if len(hex(color_count)) == 6: # Four hex digits
+		color_count_hex = " \\x" + str(hex(color_count)[2:4]) + "\\x" + str(hex(color_count)[4:6])
+	elif len(hex(color_count)) == 5: # Three hex digits
+		color_count_hex = " \\x" + str(hex(color_count)[2:3]) + "\\x" + str(hex(color_count)[3:5])
+	elif len(hex(color_count)) == 4: # Two hex digits
+		color_count_hex = " \\x0\\x" + str(hex(color_count)[2:4])
+	elif len(hex(color_count)) == 3: # One hex digit
+		color_count_hex = " \\x0\\x" + str(hex(color_count)[2:3])
+	else: # Not a valid state
+		color_count_hex = "ERROR"
 	line_output += color_count_hex
 else:
 	line_output += last_color 	
-f.write("\"" + line_output + "\"")
+f.write("\"" + line_output + "\";")
 
 			
 
