@@ -57,7 +57,7 @@ while j < len(line_buffer):
 				color_count_hex = " \\x0\\x" + str(hex(color_count)[2:3])
 			else: # Not a valid state
 				color_count_hex = "ERROR"
-			line_output += color_count_hex
+			line_output += color_count_hex + " "
 		else:
 			line_output += last_color 
 		color_count = 1
@@ -76,7 +76,7 @@ if color_count > 1:
 		color_count_hex = " \\x0\\x" + str(hex(color_count)[2:3])
 	else: # Not a valid state
 		color_count_hex = "ERROR"
-	line_output += color_count_hex
+	line_output += color_count_hex + " "
 else:
 	line_output += last_color 	
 f.write("\"" + line_output + "\";")
