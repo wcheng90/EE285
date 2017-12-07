@@ -12,9 +12,16 @@
 //#include "images/flownew.h"
 //#include "scripts/flownew_compressed.h"
 //#include "images/simpson.h"
-#include "images/thesimpsonsdarker.h"
+//#include "images/thesimpsonsdarker.h"
 //#include "scripts/test_compressed.h"
 //#include "scripts/simpson100x100darker_compressed.h"
+
+#include "images/1.h"
+#include "images/2.h"
+
+void * frames[2] = { &header_data1, &header_data2 };
+char* pointer_mux;
+
 
 // Number of active pixels on the Dotstar LED strip.
 // You may need to decrease this number if your power supply is not strong
@@ -33,7 +40,6 @@ typedef uint32_t Color;
 
 // Animation Array 
 static Color animation_data[STRIP_LENGTH * NUM_FRAME];
-static Color test_data[STRIP_LENGTH];
 
 // Stores value of the current frame of strip 0;
 static uint32_t current_frame = 0;
@@ -47,8 +53,7 @@ static uint32_t period = 0xFFFFFFFF;
 static char unlock = 0x1;
 static uint32_t now = 0;
 static uint32_t frame_time = 0;
-static uint32_t current = 0;
-static int timer_interval = 10000;
+//static int timer_interval = 10000;
 static uint32_t interrupt_ctr = 0;
 
 // Global buffer which holds all of the pixels.
@@ -124,6 +129,7 @@ static Color wheel(uint8_t wheelpos) {
     return color(wheelpos*3, 255 - wheelpos * 3, 0);
 }
 
+
 /**
  * Callback for the SPI write operation in update_strip().
  */
@@ -132,6 +138,7 @@ static void write_cb(__attribute__ ((unused)) int arg0,
                      __attribute__ ((unused)) int arg3,
                      __attribute__ ((unused)) void* userdata) {
 }
+
 
 /**
  * Set the color of the pixel at the given index.
@@ -190,10 +197,12 @@ static void initialize_strip(void) {
  * This function is what actually displays the new pixel colors onto the strip.
  * Before using this function, you must first have called initialize_strip().
  */
+
 static void update_strip(void) {
 //    spi_read_write(pixels, rbuf, PIXEL_BUFFER_SIZE, write_cb, NULL);
 	spi_read_write_sync(&pixels, &rbuf, PIXEL_BUFFER_SIZE);
 }
+
 
 Color image_rect[100][100];
 
@@ -399,11 +408,24 @@ update_strip();
 				  
 	
 
-void populate_rect(void)  {
+void populate_rect(int image_num)  {
+ char* ptr = (char*)frames[image_num];
+	if (image_num == 0){
+		pointer_mux = header_data1;
+	}
+	else{
+		pointer_mux = header_data2;
+	}
+
 	uint8_t pixel_data[3];
 	for (int i = 0; i < 100; i++) {  //i forms the horizontal rows of the image
 		for (int j = 0; j < 100; j++) {   //j forms the vertical columns
-			HEADER_PIXEL(header_data, pixel_data);
+//HEADER_PIXEL(header_data1, pixel_data);
+
+
+			HEADER_PIXEL(pointer_mux, pixel_data);
+ //  printf("The data is %d\r\n", header_data1);
+ //  delay_ms(250);
 //			image_rect[i][j] = color(pixel_data[0], pixel_data[1], pixel_data[2]);
 //			image_rect[i][j] = color(pixel_data[0]>>2, pixel_data[1]>>2, pixel_data[2]>>2);
 			image_rect[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);
@@ -415,7 +437,7 @@ void populate_rect(void)  {
 #define PI 3.14159265
 double radian_interval = (2*PI)/512;
 void rect_to_polar(void){
-	int i;
+	int i = 0;
 	for (int frame_num = 0; frame_num < 512; frame_num++){
 //		for (int r = 14; r < 50; r++){
 		for (int r = 7; r < 43; r++){
@@ -428,14 +450,15 @@ void rect_to_polar(void){
 	}
 
 
-void animation_init(void) {
+void animation_init(int image_num) {
 //	extract(header_data_compressed);
-	populate_rect();
+	populate_rect(image_num);
 
+/* Not really needed for full 100x100 images
 	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){
 		animation_data[i] = 0x0;
 		}
-
+*/
 	rect_to_polar();
 
 
@@ -522,11 +545,6 @@ void animation_init(void) {
 	animation_data[481] = 0xFFFFFFFF;
 	animation_data[518] = 0xFFFFFFFF;
 */
-	for (int i = 0; i < STRIP_LENGTH; i++){
-		test_data[i] = 0x0;
-		}
-	test_data[2] = 0xFFFFFFFF;
-
 }
 
 static void set_period_cb(__attribute__ ((unused)) int arg0,
@@ -539,12 +557,14 @@ static void set_period_cb(__attribute__ ((unused)) int arg0,
 //set_pixel(2, last);
 //update_strip();
 
+
+//Used to ensure that noise on the inductor input is thrown out
 if (now - last > 32000000){
 	if (now > last){
 		period = now - last;
 		}
 	else if(now < last){
-		period = ((2^32-1) - last) + now;
+		period = (((2^32)-1) - last) + now;
 		}
 	else{
 		period = 0;
@@ -555,6 +575,7 @@ if (now - last > 32000000){
 	frame_time = 10;
 	last = now;  // If this is pass by reference, then this won't work out;
 
+	animation_init(interrupt_ctr%2);
 //set_pixel(4, period);
 //set_pixel(0, alarm_read());
 //update_strip();
@@ -564,6 +585,7 @@ if (now - last > 32000000){
 	interrupt_ctr = interrupt_ctr + 1;
 }
 	}
+
 
 static void blink_cb(__attribute__ ((unused)) int arg0,
                      __attribute__ ((unused)) int arg2,
@@ -632,12 +654,15 @@ Color temp_color;
 
 int main(void) {
 	// Need to init the GPIOs
-//		gpio_enable_interrupt(6,0,2); // Pull None; Falling Edge
-		gpio_enable_interrupt(6,2,2); // Pull None; Falling Edge
+		gpio_set(22);
+		gpio_enable_input(22, 0);
+		gpio_enable_interrupt(22, 2);
+//		gpio_enable_interrupt(6,2,2); // Pull None; Falling Edge
+//		gpio_enable_interrupt(21,0,2); // Pull None; Falling Edge
 	// Needed before calling update_strip(). All pixels in the buffer are
 	// initialized to zero.
 		initialize_strip();
-		animation_init();
+		animation_init(1);
 	//	timer_every(timer_interval, set_period_cb, NULL, &period_timer);
 	//	timer_every(timer_interval, blinktest_cb, NULL, &period_timer);
 
@@ -655,8 +680,8 @@ gpio_interrupt_callback(set_period_cb, NULL);
 			current_frame = ((NUM_FRAME - 1) * ((double)now - (double)last))/ (double) period;
 			}
 //		else if(now < last){
-		else if(now < last && ((double) ((2^32-1) - last) + (double) now) <= 1){
-			current_frame = ((NUM_FRAME - 1) * ((double) ((2^32-1) - last) + (double) now))/ (double) period;			
+		else if(now < last && ((double) (((2^32)-1) - last) + (double) now) <= 1){
+			current_frame = ((NUM_FRAME - 1) * ((double) (((2^32)-1) - last) + (double) now))/ (double) period;			
 		}
 		else{
 			current_frame = 0;
@@ -816,7 +841,8 @@ temp_color = color(pixel_data[0], pixel_data[1], pixel_data[2]);
 set_pixel(0, temp_color);
 update_strip();
 */
-
+//    printf("Hi there! It's Warren");
+//    delay_ms(250);
         // Display the new pixel values.
 	update_wheel();
 	//yield(); -- Do not use this
