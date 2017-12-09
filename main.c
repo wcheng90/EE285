@@ -13,13 +13,12 @@
 //#include "scripts/flownew_compressed.h"
 //#include "images/simpson.h"
 //#include "images/thesimpsonsdarker.h"
-//#include "scripts/test_compressed.h"
+#include "scripts/test_compressed.h"
 //#include "scripts/simpson100x100darker_compressed.h"
 
-#include "images/1.h"
-#include "images/2.h"
+//#include "images/1.h"
+//#include "images/2.h"
 
-void * frames[2] = { &header_data1, &header_data2 };
 char* pointer_mux;
 
 
@@ -206,7 +205,7 @@ static void update_strip(void) {
 
 Color image_rect[100][100];
 
-/*
+
 void extract(char compressed_image[]) {
 	int i = 0; //i forms the horizontal rows of extracted image
 	int j = 0; //j forms the vertical columns of extracted image
@@ -220,7 +219,6 @@ void extract(char compressed_image[]) {
 	while (i < 99){
 		uint8_t pixel_data[3] = {128,128,128};
 // Handles pixels with repetitions
-//		if (compressed_image[0] == 0x58){
 		if (compressed_image[k+4] == 0x20){
 
 			pixel_repeat_cnt = (compressed_image[k+5] << 8) | (compressed_image[k+6]); //| (compressed_image[6] << 4) | (compressed_image[7]);
@@ -241,19 +239,19 @@ void extract(char compressed_image[]) {
 					j += 1;
 				} 
 			}
-*/
-/*
-			for (i = 0; i < 100; i++){
-				for (j = 0; j < 100; j++){
-					image_rect[i][j] = color(128,128,128);
-				}
-			}
-*/
-/*			k += 8; // Skip over color and value field
+
+
+//			for (i = 0; i < 100; i++){
+//				for (j = 0; j < 100; j++){
+//					image_rect[i][j] = color(128,128,128);
+//				}
+//			}
+
+			k += 8; // Skip over color and value field
 		} 
-*/
+
 // Handles single pixels
-/*		else {
+		else {
 
 			current_pixel[0] = compressed_image[k];
 			current_pixel[1] = compressed_image[k+1];
@@ -272,9 +270,10 @@ void extract(char compressed_image[]) {
 			else{
 				j += 1;
 			} 
-
+			
 			k += 4; // Skip to next color
-*/
+			pixel_repeat_cnt = 0;
+
 /*
 set_pixel(0, sizeof(compressed_image) & 0x00000001); 
 set_pixel(1, (sizeof(compressed_image) & 0x00000002) >> 1); 
@@ -393,23 +392,26 @@ update_strip();
 */
 
 //	k += 1;
-/*
-		for (i = 0; i < 100; i++){
-			for (j = 0; j < 100; j++){
-				image_rect[i][j] = color(128,128,128);
-			}
+
+//		for (i = 0; i < 100; i++){
+//			for (j = 0; j < 100; j++){
+//				image_rect[i][j] = color(128,128,128);
+//			}
+//		}
+
+
 		}
-*/
-/*
-		}
+printf("The data is %c %c %c %c. Pixel count is %x. \r\n", current_pixel[0], current_pixel[1], current_pixel[2], current_pixel[3], pixel_repeat_cnt);
+delay_ms(250);
+
 	}
 }
-*/			
+			
 				  
 	
-
+/*
 void populate_rect(int image_num)  {
- char* ptr = (char*)frames[image_num];
+// char* ptr = (char*)frames[image_num];
 	if (image_num == 0){
 		pointer_mux = header_data1;
 	}
@@ -420,9 +422,6 @@ void populate_rect(int image_num)  {
 	uint8_t pixel_data[3];
 	for (int i = 0; i < 100; i++) {  //i forms the horizontal rows of the image
 		for (int j = 0; j < 100; j++) {   //j forms the vertical columns
-//HEADER_PIXEL(header_data1, pixel_data);
-
-
 			HEADER_PIXEL(pointer_mux, pixel_data);
  //  printf("The data is %d\r\n", header_data1);
  //  delay_ms(250);
@@ -432,6 +431,7 @@ void populate_rect(int image_num)  {
 		}
 	}
 	}
+*/
 	
 
 #define PI 3.14159265
@@ -439,10 +439,7 @@ double radian_interval = (2*PI)/512;
 void rect_to_polar(void){
 	int i = 0;
 	for (int frame_num = 0; frame_num < 512; frame_num++){
-//		for (int r = 14; r < 50; r++){
 		for (int r = 7; r < 43; r++){
-//			animation_data[i] = image_rect[(int) (r*cos(0.703*frame_num) + 50)][(int) (r*sin(0.703*frame_num) + 50)];
-//			animation_data[i] = image_rect[(int) (r*cos((double)radian_interval*frame_num) + 50)][(int) (r*sin((double)radian_interval*frame_num) + 50)]; 
 			animation_data[i] = image_rect[(int) (r*(cos(((double)frame_num/512)*2*PI)) + 50)][(int) (r*(sin(((double)frame_num/512)*2*PI)) + 50)]; 
 			i++;
 		}
@@ -451,8 +448,8 @@ void rect_to_polar(void){
 
 
 void animation_init(int image_num) {
-//	extract(header_data_compressed);
-	populate_rect(image_num);
+	extract(header_data_compressed);
+//	populate_rect(image_num);
 
 /* Not really needed for full 100x100 images
 	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){
@@ -575,7 +572,7 @@ if (now - last > 32000000){
 	frame_time = 10;
 	last = now;  // If this is pass by reference, then this won't work out;
 
-	animation_init(interrupt_ctr%2);
+//	animation_init(interrupt_ctr%2);
 //set_pixel(4, period);
 //set_pixel(0, alarm_read());
 //update_strip();
@@ -653,6 +650,7 @@ uint8_t pixel_data[3];
 Color temp_color;
 
 int main(void) {
+delay_ms(1000);
 	// Need to init the GPIOs
 		gpio_set(22);
 		gpio_enable_input(22, 0);
