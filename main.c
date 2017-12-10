@@ -14,12 +14,12 @@
 //#include "images/simpson.h"
 //#include "images/thesimpsonsdarker.h"
 //#include "scripts/test_compressed.h"
-#include "scripts/simpson100x100darker_compressed.h"
+//#include "scripts/simpson100x100darker_compressed.h"
 //include "scripts/testcircle_compressed.h"
 
 
-//#include "images/1.h"
-//#include "images/2.h"
+#include "images/1.h"
+#include "images/2.h"
 
 char* pointer_mux;
 
@@ -207,7 +207,7 @@ static void update_strip(void) {
 
 Color image_rect[100][100];
 
-
+/*
 void extract(char compressed_image[]) {
 	int i = 0; //i forms the horizontal rows of extracted image
 	int j = 0; //j forms the vertical columns of extracted image
@@ -229,7 +229,7 @@ void extract(char compressed_image[]) {
 				current_pixel[1] = compressed_image[k+1];
 				current_pixel[2] = compressed_image[k+2];
 				current_pixel[3] = compressed_image[k+3];
-				HEADER_PIXEL(current_pixel , pixel_data);
+				HEADER_PIXEL_COMPRESSED(current_pixel , pixel_data);
 				image_rect[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);	
 
 				//image_rect[i][j] = color(0, 0, 255);			
@@ -258,7 +258,7 @@ void extract(char compressed_image[]) {
 			current_pixel[1] = compressed_image[k+1];
 			current_pixel[2] = compressed_image[k+2];
 			current_pixel[3] = compressed_image[k+3];
-			HEADER_PIXEL(current_pixel , pixel_data);
+			HEADER_PIXEL_COMPRESSED(current_pixel , pixel_data);
 			image_rect[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);	
 
 //			extracted_image[i][j] = color(128, 0, 128);
@@ -275,123 +275,6 @@ void extract(char compressed_image[]) {
 			k += 4; // Skip to next color
 			pixel_repeat_cnt = 0;
 
-/*
-set_pixel(0, sizeof(compressed_image) & 0x00000001); 
-set_pixel(1, (sizeof(compressed_image) & 0x00000002) >> 1); 
-set_pixel(2, (sizeof(compressed_image) & 0x00000004) >> 2); 
-set_pixel(3, (sizeof(compressed_image) & 0x00000008) >> 3); 
-set_pixel(4, (sizeof(compressed_image) & 0x00000010) >> 4); 
-set_pixel(5, (sizeof(compressed_image) & 0x00000020) >> 5); 
-set_pixel(6, (sizeof(compressed_image) & 0x00000040) >> 6); 
-set_pixel(7, (sizeof(compressed_image) & 0x00000080) >> 7); 
-set_pixel(8, (sizeof(compressed_image) & 0x00000001) >> 8); 
-set_pixel(9, (sizeof(compressed_image) & 0x00000002) >> 9); 
-set_pixel(10, (sizeof(compressed_image) & 0x00000004) >> 10); 
-set_pixel(11, (sizeof(compressed_image) & 0x00000008) >> 11); 
-set_pixel(12, (sizeof(compressed_image) & 0x00000010) >> 12); 
-set_pixel(13, (sizeof(compressed_image) & 0x00000020) >> 13); 
-set_pixel(14, (sizeof(compressed_image) & 0x00000040) >> 14); 
-set_pixel(15, (sizeof(compressed_image) & 0x00000080) >> 15); 
-set_pixel(16, sizeof(compressed_image[0]) & 0x00000001); 
-set_pixel(17, (sizeof(compressed_image[0]) & 0x00000002) >> 1); 
-set_pixel(18, (sizeof(compressed_image[0]) & 0x00000004) >> 2); 
-set_pixel(19, (sizeof(compressed_image[0]) & 0x00000008) >> 3); 
-set_pixel(20, (sizeof(compressed_image[0]) & 0x00000010) >> 4); 
-set_pixel(21, (sizeof(compressed_image[0]) & 0x00000020) >> 5); 
-set_pixel(22, (sizeof(compressed_image[0]) & 0x00000040) >> 6); 
-set_pixel(23, (sizeof(compressed_image[0]) & 0x00000080) >> 7); 
-set_pixel(24, (sizeof(compressed_image[0]) & 0x00000001) >> 8); 
-set_pixel(25, (sizeof(compressed_image[0]) & 0x00000002) >> 9); 
-set_pixel(26, (sizeof(compressed_image[0]) & 0x00000004) >> 10); 
-set_pixel(27, (sizeof(compressed_image[0]) & 0x00000008) >> 11); 
-set_pixel(28, (sizeof(compressed_image[0]) & 0x00000010) >> 12); 
-set_pixel(29, (sizeof(compressed_image[0]) & 0x00000020) >> 13); 
-set_pixel(30, (sizeof(compressed_image[0]) & 0x00000040) >> 14); 
-set_pixel(31, (sizeof(compressed_image[0]) & 0x00000080) >> 15); 
-update_strip();
-*/
-/*
-set_pixel(0, compressed_image[5] & 0x00000001); 
-set_pixel(1, (compressed_image[5] & 0x00000002) >> 1); 
-set_pixel(2, (compressed_image[5] & 0x00000004) >> 2); 
-set_pixel(3, (compressed_image[5] & 0x00000008) >> 3); 
-set_pixel(4, (compressed_image[5] & 0x00000010) >> 4); 
-set_pixel(5, (compressed_image[5] & 0x00000020) >> 5); 
-set_pixel(6, (compressed_image[5] & 0x00000040) >> 6); 
-set_pixel(7, (compressed_image[5] & 0x00000080) >> 7); 
-set_pixel(8, (compressed_image[5] & 0x00000100) >> 8); 
-set_pixel(9, (compressed_image[5] & 0x00000200) >> 9); 
-set_pixel(10, (compressed_image[5] & 0x00000400) >> 10); 
-set_pixel(11, (compressed_image[5] & 0x00000800) >> 11); 
-set_pixel(12, (compressed_image[5] & 0x00001000) >> 12); 
-set_pixel(13, (compressed_image[5] & 0x00002000) >> 13); 
-set_pixel(14, (compressed_image[5] & 0x00004000) >> 14); 
-set_pixel(15, (compressed_image[5] & 0x00008000) >> 15); 
-set_pixel(16, compressed_image[6] & 0x00000001); 
-set_pixel(17, (compressed_image[6] & 0x00000002) >> 1); 
-set_pixel(18, (compressed_image[6] & 0x00000004) >> 2); 
-set_pixel(19, (compressed_image[6] & 0x00000008) >> 3); 
-set_pixel(20, (compressed_image[6] & 0x00000010) >> 4); 
-set_pixel(21, (compressed_image[6] & 0x00000020) >> 5); 
-set_pixel(22, (compressed_image[6] & 0x00000040) >> 6); 
-set_pixel(23, (compressed_image[6] & 0x00000080) >> 7); 
-set_pixel(24, (j & 0x00000001) >> 8); 
-set_pixel(25, (j & 0x00000002) >> 9); 
-set_pixel(26, (j & 0x00000004) >> 10); 
-set_pixel(27, (j & 0x00000008) >> 11); 
-set_pixel(28, (j & 0x00000010) >> 12); 
-set_pixel(29, (j & 0x00000020) >> 13); 
-set_pixel(30, (j & 0x00000040) >> 14); 
-set_pixel(31, (j & 0x00000080) >> 15); 
-update_strip();
-*/
-/*
-set_pixel(0, i & 0x00000001); 
-set_pixel(1, (i & 0x00000002) >> 1); 
-set_pixel(2, (i & 0x00000004) >> 2); 
-set_pixel(3, (i & 0x00000008) >> 3); 
-set_pixel(4, (i & 0x00000010) >> 4); 
-set_pixel(5, (i & 0x00000020) >> 5); 
-set_pixel(6, (i & 0x00000040) >> 6); 
-set_pixel(7, (i & 0x00000080) >> 7); 
-set_pixel(8, (i & 0x00000001) >> 8); 
-set_pixel(9, (i & 0x00000002) >> 9); 
-set_pixel(10, (i & 0x00000004) >> 10); 
-set_pixel(11, (i & 0x00000008) >> 11); 
-set_pixel(12, (i & 0x00000010) >> 12); 
-set_pixel(13, (i & 0x00000020) >> 13); 
-set_pixel(14, (i & 0x00000040) >> 14); 
-set_pixel(15, (i & 0x00000080) >> 15); 
-set_pixel(16, j & 0x00000001); 
-set_pixel(17, (j & 0x00000002) >> 1); 
-set_pixel(18, (j & 0x00000004) >> 2); 
-set_pixel(19, (j & 0x00000008) >> 3); 
-set_pixel(20, (j & 0x00000010) >> 4); 
-set_pixel(21, (j & 0x00000020) >> 5); 
-set_pixel(22, (j & 0x00000040) >> 6); 
-set_pixel(23, (j & 0x00000080) >> 7); 
-set_pixel(24, (j & 0x00000001) >> 8); 
-set_pixel(25, (j & 0x00000002) >> 9); 
-set_pixel(26, (j & 0x00000004) >> 10); 
-set_pixel(27, (j & 0x00000008) >> 11); 
-set_pixel(28, (j & 0x00000010) >> 12); 
-set_pixel(29, (j & 0x00000020) >> 13); 
-set_pixel(30, (j & 0x00000040) >> 14); 
-set_pixel(31, (j & 0x00000080) >> 15); 
-update_strip();
-*/
-/*
-set_pixel(0, k & 0x00000001); 
-set_pixel(1, (k & 0x00000002) >> 1); 
-set_pixel(2, (k & 0x00000004) >> 2); 
-set_pixel(3, (k & 0x00000008) >> 3); 
-set_pixel(4, (k & 0x00000010) >> 4); 
-set_pixel(5, (k & 0x00000020) >> 5); 
-set_pixel(6, (k & 0x00000040) >> 6); 
-set_pixel(7, (k & 0x00000080) >> 7); 
-update_strip();
-*/
-
 //	k += 1;
 
 //		for (i = 0; i < 100; i++){
@@ -399,7 +282,6 @@ update_strip();
 //				image_rect[i][j] = color(128,128,128);
 //			}
 //		}
-
 
 		}
 //printf("The data is %c %c %c %c. Pixel count is %x. \r\n", current_pixel[0], current_pixel[1], current_pixel[2], current_pixel[3], pixel_repeat_cnt);
@@ -409,10 +291,11 @@ update_strip();
 
 	}
 }
-			
+
+*/	
 				  
 	
-/*
+
 void populate_rect(int image_num)  {
 // char* ptr = (char*)frames[image_num];
 	if (image_num == 0){
@@ -434,7 +317,7 @@ void populate_rect(int image_num)  {
 		}
 	}
 	}
-*/
+
 	
 
 #define PI 3.14159265
@@ -451,8 +334,8 @@ void rect_to_polar(void){
 
 
 void animation_init(int image_num) {
-	extract(header_data_compressed);
-//	populate_rect(image_num);
+//	extract(header_data_compressed);
+	populate_rect(image_num);
 
 /* Not really needed for full 100x100 images
 	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){
@@ -575,7 +458,7 @@ if (now - last > 32000000){
 	frame_time = 10;
 	last = now;  // If this is pass by reference, then this won't work out;
 
-//	animation_init(interrupt_ctr%2);
+	animation_init(interrupt_ctr%2);
 //set_pixel(4, period);
 //set_pixel(0, alarm_read());
 //update_strip();

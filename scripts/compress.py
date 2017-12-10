@@ -21,7 +21,10 @@ for line in lines:
 	i = 0
 	if line != "static char *header_data =" + "\n" and begin_compress == False:
 		if line != "data += 4; \\" + "\n":
- 			f.write(line)
+			if line == "#define HEADER_PIXEL(data,pixel) {\\" + "\n":
+				f.write("#define HEADER_PIXEL_COMPRESSED(data,pixel) {\\" + "\n")
+			else:
+ 				f.write(line)
 	elif line == "static char *header_data =" + "\n":
 		f.write("static char *header_data_compressed =" + "\n")
 		begin_compress = True
@@ -74,7 +77,7 @@ while j < len(line_buffer) - 4:
 			pixel_count += 1
 		color_count = 1 
 		last_color = line_buffer[j:j+4+slash_count] 
-		print(line_buffer[j:j+4+slash_count])
+#		print(line_buffer[j:j+4+slash_count])
 	j += 4 + slash_count #Increment by pixel
 # Last iteration of loop needs to written
 if color_count > 1:
