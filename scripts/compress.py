@@ -40,9 +40,19 @@ last_color = ""
 line_output = ""
 color_count = 1
 color_count_hex = ""
-while j < len(line_buffer):
+pixel_count = 0
+while j < len(line_buffer) - 4:
+	slash_count = 0
+	# Ensures that we have four characters, excludes the escape characters
+#	print(len(line_buffer[j:j+4+slash_count]) - line_buffer[j:j+4+slash_count].count('\\'))
+#	print("This is the data:" + line_buffer[j:j+4+slash_count])
+	while len(line_buffer[j:j+4+slash_count]) - line_buffer[j:j+4+slash_count].count('\\') + line_buffer[j:j+4+slash_count].count("\\\\") < 4: 
+		slash_count = line_buffer[j:j+4+slash_count].count('\\') - line_buffer[j:j+4+slash_count].count("\\\\")
+#		print("This is the data:" + line_buffer[j:j+4+slash_count])
+#		print(slash_count)
+		
 
-	if line_buffer[j:j+4] == last_color:  #j+4 not included in the comparison
+	if line_buffer[j:j+4+slash_count] == last_color:  #j+4 not included in the comparison
 		color_count += 1
 	else: # Save the last color to line_output and reset the color count if new color
 		if color_count > 1:
@@ -58,11 +68,14 @@ while j < len(line_buffer):
 			else: # Not a valid state
 				color_count_hex = "ERROR"
 			line_output += color_count_hex + " "
+			pixel_count += color_count
 		else:
 			line_output += last_color 
-		color_count = 1
-		last_color = line_buffer[j:j+4]
-	j += 4 #Increment by pixel
+			pixel_count += 1
+		color_count = 1 
+		last_color = line_buffer[j:j+4+slash_count] 
+		print(line_buffer[j:j+4+slash_count])
+	j += 4 + slash_count #Increment by pixel
 # Last iteration of loop needs to written
 if color_count > 1:
 	line_output += last_color 
@@ -77,11 +90,13 @@ if color_count > 1:
 	else: # Not a valid state
 		color_count_hex = "ERROR"
 	line_output += color_count_hex + " "
+	pixel_count += color_count
 else:
-	line_output += last_color 	
+	line_output += last_color 
+	pixel_count += 1	
 f.write("\"" + line_output + "\";")
-
+print(pixel_count)
 			
 
 
-f.close()
+f.close() 

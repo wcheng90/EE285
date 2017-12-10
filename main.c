@@ -13,8 +13,10 @@
 //#include "scripts/flownew_compressed.h"
 //#include "images/simpson.h"
 //#include "images/thesimpsonsdarker.h"
-#include "scripts/test_compressed.h"
-//#include "scripts/simpson100x100darker_compressed.h"
+//#include "scripts/test_compressed.h"
+#include "scripts/simpson100x100darker_compressed.h"
+//include "scripts/testcircle_compressed.h"
+
 
 //#include "images/1.h"
 //#include "images/2.h"
@@ -231,7 +233,7 @@ void extract(char compressed_image[]) {
 				image_rect[i][j] = color(pixel_data[0]>>4, pixel_data[1]>>4, pixel_data[2]>>4);	
 
 				//image_rect[i][j] = color(0, 0, 255);			
-				if (j >= 100){
+				if (j >= 99){
 					i += 1;
 					j = 0;
 				}
@@ -239,7 +241,6 @@ void extract(char compressed_image[]) {
 					j += 1;
 				} 
 			}
-
 
 //			for (i = 0; i < 100; i++){
 //				for (j = 0; j < 100; j++){
@@ -263,7 +264,7 @@ void extract(char compressed_image[]) {
 //			extracted_image[i][j] = color(128, 0, 128);
 //			image_rect[i][j] = color(128, 0, 128);
 				
-			if (j >= 100){
+			if (j >= 99){
 				i += 1;
 				j = 0;
 			}
@@ -401,8 +402,10 @@ update_strip();
 
 
 		}
-printf("The data is %c %c %c %c. Pixel count is %x. \r\n", current_pixel[0], current_pixel[1], current_pixel[2], current_pixel[3], pixel_repeat_cnt);
-delay_ms(250);
+//printf("The data is %c %c %c %c. Pixel count is %x. \r\n", current_pixel[0], current_pixel[1], current_pixel[2], current_pixel[3], pixel_repeat_cnt);
+//delay_ms(250);
+//printf("The i is %d. The j is %d. \r\n", i, j);
+//delay_ms(250);
 
 	}
 }
