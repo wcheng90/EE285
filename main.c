@@ -17,18 +17,18 @@
 //#include "scripts/simpson100x100darker_compressed.h"
 //include "scripts/testcircle_compressed.h"
 
-
 #include "images/1.h"
 #include "images/2.h"
 
 char* pointer_mux;
-
+//char* pointer_mux[2];
 
 // Number of active pixels on the Dotstar LED strip.
 // You may need to decrease this number if your power supply is not strong
 // enough.
 #define NUM_PIXELS 144
 #define PIXEL_BUFFER_SIZE ((NUM_PIXELS*4) + 8)
+#define IMAGE_NUM 2
 
 // Number of frames in an image
 #define NUM_FRAME 512
@@ -41,6 +41,7 @@ typedef uint32_t Color;
 
 // Animation Array 
 static Color animation_data[STRIP_LENGTH * NUM_FRAME];
+static Color animation_data2[STRIP_LENGTH * NUM_FRAME];
 
 // Stores value of the current frame of strip 0;
 static uint32_t current_frame = 0;
@@ -298,6 +299,7 @@ void extract(char compressed_image[]) {
 
 void populate_rect(int image_num)  {
 // char* ptr = (char*)frames[image_num];
+
 	if (image_num == 0){
 		pointer_mux = header_data1;
 	}
@@ -322,11 +324,17 @@ void populate_rect(int image_num)  {
 
 #define PI 3.14159265
 double radian_interval = (2*PI)/512;
-void rect_to_polar(void){
+void rect_to_polar(int polar_buffer_num){
 	int i = 0;
 	for (int frame_num = 0; frame_num < 512; frame_num++){
 		for (int r = 7; r < 43; r++){
-			animation_data[i] = image_rect[(int) (r*(cos(((double)frame_num/512)*2*PI)) + 50)][(int) (r*(sin(((double)frame_num/512)*2*PI)) + 50)]; 
+//			if (polar_buffer_num == 0){
+				animation_data[i] = image_rect[(int) (r*(cos(((double)frame_num/512)*2*PI)) + 50)][(int) (r*(sin(((double)frame_num/512)*2*PI)) + 50)]; 
+//			}
+//			else{
+//				animation_data2[i] = image_rect[(int) (r*(cos(((double)frame_num/512)*2*PI)) + 50)][(int) (r*(sin(((double)frame_num/512)*2*PI)) + 50)]; 
+//			}
+	
 			i++;
 		}
 	}
@@ -342,7 +350,7 @@ void animation_init(int image_num) {
 		animation_data[i] = 0x0;
 		}
 */
-	rect_to_polar();
+	rect_to_polar(0);
 
 
 /*
@@ -407,28 +415,9 @@ void animation_init(int image_num) {
 //	animation_data[35 * 36 + 35] = 0xFFFFFFFF;
 
 
-/*
-	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){
-		animation_data[i] = 0x0;
-		}
-	
-	animation_data[0] = 0xFFFFFFFF;
-	animation_data[37] = 0xFFFFFFFF;
-	animation_data[74] = 0xFFFFFFFF;
-	animation_data[111] = 0xFFFFFFFF;
-	animation_data[148] = 0xFFFFFFFF;
-	animation_data[185] = 0xFFFFFFFF;
-	animation_data[222] = 0xFFFFFFFF;
-	animation_data[259] = 0xFFFFFFFF;
-	animation_data[296] = 0xFFFFFFFF;
-	animation_data[333] = 0xFFFFFFFF;
-	animation_data[370] = 0xFFFFFFFF;
-	animation_data[407] = 0xFFFFFFFF;
-	animation_data[444] = 0xFFFFFFFF;
-	animation_data[481] = 0xFFFFFFFF;
-	animation_data[518] = 0xFFFFFFFF;
-*/
 }
+
+int image_ptr = 0;
 
 static void set_period_cb(__attribute__ ((unused)) int arg0,
                      __attribute__ ((unused)) int arg2,
@@ -457,8 +446,17 @@ if (now - last > 32000000){
 //	frame_time = period/512;
 	frame_time = 10;
 	last = now;  // If this is pass by reference, then this won't work out;
-
-	animation_init(interrupt_ctr%2);
+	
+	if (interrupt_ctr%6 == 0){
+		if (image_ptr < IMAGE_NUM - 1){
+			image_ptr += 1;
+		}
+		else{
+			image_ptr = 0;
+		}
+		animation_init(image_ptr);
+	}
+	
 //set_pixel(4, period);
 //set_pixel(0, alarm_read());
 //update_strip();
@@ -504,7 +502,7 @@ void set_strip(char strip_number, Color data[STRIP_LENGTH]) {
 	}
 }
 
-void update_wheel(void) {
+void update_wheel(int polar_buffer_num) {
 // Subtracting current frame allows us to compensate for the fact that the wheel
 // rotates clockwise, but the cosine/sine trig functions map counter clockwise.
 // Without this, the image will appear in reverse as you bike forward
@@ -514,10 +512,19 @@ int framestrip0_ptr = (511 - current_frame) * STRIP_LENGTH;
 int framestrip1_ptr = (((128 + (511 - current_frame)) % 512) * STRIP_LENGTH);
 int framestrip2_ptr = (((256 + (511 - current_frame)) % 512) * STRIP_LENGTH);
 int framestrip3_ptr = (((384 + (511 - current_frame)) % 512) * STRIP_LENGTH);
-	set_strip(0, &animation_data[framestrip2_ptr]);
-	set_strip(1, &animation_data[framestrip3_ptr]);
-	set_strip(2, &animation_data[framestrip0_ptr]);
-	set_strip(3, &animation_data[framestrip1_ptr]);
+//	if (polar_buffer_num == 0){
+		set_strip(0, &animation_data[framestrip2_ptr]);
+		set_strip(1, &animation_data[framestrip3_ptr]);
+		set_strip(2, &animation_data[framestrip0_ptr]);
+		set_strip(3, &animation_data[framestrip1_ptr]);
+/*	}
+	else{
+		set_strip(0, &animation_data2[framestrip2_ptr]);
+		set_strip(1, &animation_data2[framestrip3_ptr]);
+		set_strip(2, &animation_data2[framestrip0_ptr]);
+		set_strip(3, &animation_data2[framestrip1_ptr]);
+	}
+*/
 /*
 	set_strip(0, &animation_data[framestrip3_ptr]);
 	set_strip(1, &animation_data[framestrip2_ptr]);
@@ -536,7 +543,9 @@ uint8_t pixel_data[3];
 Color temp_color;
 
 int main(void) {
-delay_ms(1000);
+//delay_ms(1000);
+//pointer_mux[0] = header_data1;
+//pointer_mux[1] = header_data2;
 	// Need to init the GPIOs
 		gpio_set(22);
 		gpio_enable_input(22, 0);
@@ -575,150 +584,6 @@ gpio_interrupt_callback(set_period_cb, NULL);
 	}
 
 
-//current_frame = 0;
-
-/*
-set_pixel(0, now);
-set_pixel(2, last);
-set_pixel(4, now-last);
-set_pixel(6, period);
-set_pixel(8, 0x00FF00FF);
-set_pixel(10, current_frame);
-*/
-
-/*
-set_pixel(0, current_frame & 0x00000001); 
-set_pixel(1, (current_frame & 0x00000002) >> 1); 
-set_pixel(2, (current_frame & 0x00000004) >> 2); 
-set_pixel(3, (current_frame & 0x00000008) >> 3); 
-set_pixel(4, (current_frame & 0x00000010) >> 4); 
-set_pixel(5, (current_frame & 0x00000020) >> 5); 
-set_pixel(6, (current_frame & 0x00000040) >> 6); 
-set_pixel(7, (current_frame & 0x00000080) >> 7); 
-set_pixel(8, (current_frame & 0x00000100) >> 8); 
-set_pixel(9, (current_frame & 0x00000200) >> 9);
-set_pixel(10, (current_frame & 0x00000400) >> 10);
-set_pixel(11, (current_frame & 0x00000800) >> 11);
-set_pixel(12, (current_frame & 0x00001000) >> 12);
-set_pixel(13, (current_frame & 0x00002000) >> 13);
-set_pixel(14, (current_frame & 0x00004000) >> 14);
-set_pixel(15, (current_frame & 0x00008000) >> 15);
-set_pixel(16, (current_frame & 0x00010000) >> 16);
-set_pixel(17, (current_frame & 0x00020000) >> 17);
-set_pixel(18, (current_frame & 0x00040000) >> 18);
-set_pixel(19, (current_frame & 0x00080000) >> 19);
-set_pixel(20, (current_frame & 0x00100000) >> 20);
-set_pixel(21, (current_frame & 0x00200000) >> 21);
-set_pixel(22, (current_frame & 0x00400000) >> 22);
-set_pixel(23, (current_frame & 0x00800000) >> 23);
-set_pixel(24, (current_frame & 0x01000000) >> 24);
-set_pixel(25, (current_frame & 0x02000000) >> 25);
-set_pixel(26, (current_frame & 0x04000000) >> 26);
-set_pixel(27, (current_frame & 0x08000000) >> 27);
-set_pixel(28, (current_frame & 0x10000000) >> 28);
-set_pixel(29, (current_frame & 0x20000000) >> 29);
-set_pixel(30, (current_frame & 0x40000000) >> 30);
-set_pixel(31, (current_frame & 0x80000000) >> 31);
-update_strip();
-*/
-
-/*
-set_pixel(0, period & 0x00000001); 
-set_pixel(1, (period & 0x00000002) >> 1); 
-set_pixel(2, (period & 0x00000004) >> 2); 
-set_pixel(3, (period & 0x00000008) >> 3); 
-set_pixel(4, (period & 0x00000010) >> 4); 
-set_pixel(5, (period & 0x00000020) >> 5); 
-set_pixel(6, (period & 0x00000040) >> 6); 
-set_pixel(7, (period & 0x00000080) >> 7); 
-set_pixel(8, (period & 0x00000100) >> 8); 
-set_pixel(9, (period & 0x00000200) >> 9);
-set_pixel(10, (period & 0x00000400) >> 10);
-set_pixel(11, (period & 0x00000800) >> 11);
-set_pixel(12, (period & 0x00001000) >> 12);
-set_pixel(13, (period & 0x00002000) >> 13);
-set_pixel(14, (period & 0x00004000) >> 14);
-set_pixel(15, (period & 0x00008000) >> 15);
-set_pixel(16, (period & 0x00010000) >> 16);
-set_pixel(17, (period & 0x00020000) >> 17);
-set_pixel(18, (period & 0x00040000) >> 18);
-set_pixel(19, (period & 0x00080000) >> 19);
-set_pixel(20, (period & 0x00100000) >> 20);
-set_pixel(21, (period & 0x00200000) >> 21);
-set_pixel(22, (period & 0x00400000) >> 22);
-set_pixel(23, (period & 0x00800000) >> 23);
-set_pixel(24, (period & 0x01000000) >> 24);
-set_pixel(25, (period & 0x02000000) >> 25);
-set_pixel(26, (period & 0x04000000) >> 26);
-set_pixel(27, (period & 0x08000000) >> 27);
-set_pixel(28, (period & 0x10000000) >> 28);
-set_pixel(29, (period & 0x20000000) >> 29);
-set_pixel(30, (period & 0x40000000) >> 30);
-set_pixel(31, (period & 0x80000000) >> 31);
-*/
-
-/*
-set_pixel(0, interrupt_ctr & 0x00000001); 
-set_pixel(1, (interrupt_ctr & 0x00000002) >> 1); 
-set_pixel(2, (interrupt_ctr & 0x00000004) >> 2); 
-set_pixel(3, (interrupt_ctr & 0x00000008) >> 3); 
-set_pixel(4, (interrupt_ctr & 0x00000010) >> 4); 
-set_pixel(5, (interrupt_ctr & 0x00000020) >> 5); 
-set_pixel(6, (interrupt_ctr & 0x00000040) >> 6); 
-set_pixel(7, (interrupt_ctr & 0x00000080) >> 7); 
-set_pixel(8, (interrupt_ctr & 0x00000100) >> 8); 
-set_pixel(9, (interrupt_ctr & 0x00000200) >> 9);
-set_pixel(10, (interrupt_ctr & 0x00000400) >> 10);
-set_pixel(11, (interrupt_ctr & 0x00000800) >> 11);
-set_pixel(12, (interrupt_ctr & 0x00001000) >> 12);
-set_pixel(13, (interrupt_ctr & 0x00002000) >> 13);
-set_pixel(14, (interrupt_ctr & 0x00004000) >> 14);
-set_pixel(15, (interrupt_ctr & 0x00008000) >> 15);
-set_pixel(16, (interrupt_ctr & 0x00010000) >> 16);
-set_pixel(17, (interrupt_ctr & 0x00020000) >> 17);
-set_pixel(18, (interrupt_ctr & 0x00040000) >> 18);
-set_pixel(19, (interrupt_ctr & 0x00080000) >> 19);
-set_pixel(20, (interrupt_ctr & 0x00100000) >> 20);
-set_pixel(21, (interrupt_ctr & 0x00200000) >> 21);
-set_pixel(22, (interrupt_ctr & 0x00400000) >> 22);
-set_pixel(23, (interrupt_ctr & 0x00800000) >> 23);
-set_pixel(24, (interrupt_ctr & 0x01000000) >> 24);
-set_pixel(25, (interrupt_ctr & 0x02000000) >> 25);
-set_pixel(26, (interrupt_ctr & 0x04000000) >> 26);
-set_pixel(27, (interrupt_ctr & 0x08000000) >> 27);
-set_pixel(28, (interrupt_ctr & 0x10000000) >> 28);
-set_pixel(29, (interrupt_ctr & 0x20000000) >> 29);
-set_pixel(30, (interrupt_ctr & 0x40000000) >> 30);
-set_pixel(31, (interrupt_ctr & 0x80000000) >> 31);
-//set_pixel(32, now);
-//set_pixel(33, last);
-//set_pixel(34, (now-last));
-//set_pixel(35, period);
-set_pixel(32, now >> 16);
-set_pixel(33, last >> 16);
-set_pixel(34, (now-last) >> 16);
-set_pixel(35, period > 16);
-//set_pixel(40, now);
-//set_pixel(41, last);
-//set_pixel(42, (now-last));
-//set_pixel(43, period);
-update_strip();
-*/
-
-/*
-set_pixel(0, wheel(0)); 
-set_pixel(1, wheel(1)); 
-set_pixel(2, wheel(2)); 
-set_pixel(3, wheel(3)); 
-set_pixel(4, wheel(4)); 
-set_pixel(5, wheel(5)); 
-set_pixel(6, wheel(6)); 
-set_pixel(7, wheel(7)); 
-set_pixel(8, wheel(8)); 
-set_pixel(9, wheel(9));
-update_strip();
-*/
-//set_pixel(0, 0x00000000);
 /*
 HEADER_PIXEL(header_data, pixel_data);
 temp_color = color(pixel_data[0], pixel_data[1], pixel_data[2]);
@@ -728,7 +593,7 @@ update_strip();
 //    printf("Hi there! It's Warren");
 //    delay_ms(250);
         // Display the new pixel values.
-	update_wheel();
+	update_wheel(0);
 	//yield(); -- Do not use this
 
     }
