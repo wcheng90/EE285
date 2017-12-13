@@ -19,16 +19,10 @@ begin_compress = False
 line_buffer = ""
 for line in lines:
 	i = 0
-	if line != "static char *header_data =" + "\n" and begin_compress == False:
-		if line != "data += 4; \\" + "\n":
-			if line == "#define HEADER_PIXEL(data,pixel) {\\" + "\n":
-				f.write("#define HEADER_PIXEL_COMPRESSED(data,pixel) {\\" + "\n")
-			else:
- 				f.write(line)
-	elif line == "static char *header_data =" + "\n":
-		f.write("static char *header_data_compressed =" + "\n")
+	if line == "static char *header_data =" + "\n":
+		f.write("static char *header_data_compressed_" + output_filename + "=" + "\n")
 		begin_compress = True
-	else:
+	elif begin_compress == True:
 		if line != "\t\"\";\n": #ignores last line
 			while line[i] != "\"":
 				i += 1

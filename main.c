@@ -16,9 +16,10 @@
 //#include "scripts/test_compressed.h"
 //#include "scripts/simpson100x100darker_compressed.h"
 //include "scripts/testcircle_compressed.h"
-
-#include "images/1.h"
-#include "images/2.h"
+#include "scripts/pikachu_compressed.h"
+#include "scripts/charmander_compressed.h"
+//#include "images/1.h"
+//#include "images/2.h"
 
 char* pointer_mux;
 //char* pointer_mux[2];
@@ -35,6 +36,19 @@ char* pointer_mux;
 
 // Number of pixels in a strip
 #define STRIP_LENGTH 36
+
+#define HEADER_PIXEL_COMPRESSED(data,pixel) {\
+pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \
+pixel[1] = ((((data[1] - 33) & 0xF) << 4) | ((data[2] - 33) >> 2)); \
+pixel[2] = ((((data[2] - 33) & 0x3) << 6) | ((data[3] - 33))); \
+}
+
+#define HEADER_PIXEL(data,pixel) {\
+pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \
+pixel[1] = ((((data[1] - 33) & 0xF) << 4) | ((data[2] - 33) >> 2)); \
+pixel[2] = ((((data[2] - 33) & 0x3) << 6) | ((data[3] - 33))); \
+data += 4; \
+}
 
 // A Color is a 'packed' representation of its RGB components.
 typedef uint32_t Color;
@@ -208,7 +222,7 @@ static void update_strip(void) {
 
 Color image_rect[100][100];
 
-/*
+
 void extract(char compressed_image[]) {
 	int i = 0; //i forms the horizontal rows of extracted image
 	int j = 0; //j forms the vertical columns of extracted image
@@ -293,10 +307,10 @@ void extract(char compressed_image[]) {
 	}
 }
 
-*/	
+
 				  
 	
-
+/*
 void populate_rect(int image_num)  {
 // char* ptr = (char*)frames[image_num];
 
@@ -319,7 +333,7 @@ void populate_rect(int image_num)  {
 		}
 	}
 	}
-
+*/
 	
 
 #define PI 3.14159265
@@ -342,8 +356,14 @@ void rect_to_polar(int polar_buffer_num){
 
 
 void animation_init(int image_num) {
-//	extract(header_data_compressed);
-	populate_rect(image_num);
+	if (image_num == 0){
+		pointer_mux = header_data_compressed1;
+	}
+	else{
+		pointer_mux = header_data_compressed2;
+	}
+	extract(pointer_mux);
+//	populate_rect(image_num);
 
 /* Not really needed for full 100x100 images
 	for (int i = 0; i < STRIP_LENGTH*NUM_FRAME; i++){

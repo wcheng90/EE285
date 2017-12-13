@@ -1,0 +1,10 @@
+import glob
+if os.getcwd() != "/home/user/Desktop/PokemonIMG":
+    os.chdir("/home/user/Desktop/PokemonIMG")
+for fname in glob.glob("/home/user/Desktop/PokemonIMG/*.bmp"):
+    img = pdb.gimp_file_load(fname, fname)
+    img.flatten()
+    if pdb.gimp_image_base_type(img) != RGB:
+        pdb.gimp_convert_rgb(img)
+    new_name = fname[:-4] + ".h"
+    pdb.gimp_file_save(img, img.layers[0], new_name, new_name)
