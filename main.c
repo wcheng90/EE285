@@ -16,10 +16,51 @@
 //#include "scripts/test_compressed.h"
 //#include "scripts/simpson100x100darker_compressed.h"
 //include "scripts/testcircle_compressed.h"
-#include "scripts/pikachu_compressed.h"
-#include "scripts/charmander_compressed.h"
+//#include "scripts/pikachu_compressed.h"
+//#include "scripts/charmander_compressed.h"
 //#include "images/1.h"
 //#include "images/2.h"
+//Images Here
+#include "scripts/pokemon/079Slowpoke_Dream_compressed.h"
+#include "scripts/pokemon/Poke_mew_compressed.h"
+#include "scripts/pokemon/124Jynx_compressed.h"
+#include "scripts/pokemon/2100ShinyVoltorb_compressed.h"
+#include "scripts/pokemon/pichu_by_mighty355d7cwjv7_compressed.h"
+#include "scripts/pokemon/311Plusle_AG_anime_2_compressed.h"
+#include "scripts/pokemon/001Bulbasaur_Dream_compressed.h"
+#include "scripts/pokemon/158Totodile_OS_anime_compressed.h"
+#include "scripts/pokemon/squirtle_compressed.h"
+#include "scripts/pokemon/613px006Charizard_Dream_compressed.h"
+#include "scripts/pokemon/255_torchic_by_pklucariod5z1jk7_compressed.h"
+#include "scripts/pokemon/hitmonlee_by_mighty355d7f7yqw_compressed.h"
+#include "scripts/pokemon/250px150Mewtwo_compressed.h"
+#include "scripts/pokemon/enhanced1938714483146278_compressed.h"
+#include "scripts/pokemon/pikachu_compressed.h"
+#include "scripts/pokemon/063_compressed.h"
+#include "scripts/pokemon/93Haunter_compressed.h"
+#include "scripts/pokemon/5e7_compressed.h"
+#include "scripts/pokemon/258Mudkip_AG_anime_2_compressed.h"
+#include "scripts/pokemon/minum_by_kinlinkd3leo5p_compressed.h"
+#include "scripts/pokemon/077Ponyta_Dream_compressed.h"
+#include "scripts/pokemon/Lugia_compressed.h"
+#include "scripts/pokemon/010Caterpie_Dream_compressed.h"
+#include "scripts/pokemon/vulpix_compressed.h"
+#include "scripts/pokemon/Charmander265x300_compressed.h"
+#include "scripts/pokemon/013Weedle_Dream_compressed.h"
+#include "scripts/pokemon/155Cyndaquil_OS_anime_2_compressed.h"
+#include "scripts/pokemon/083Farfetchd_Dream_compressed.h"
+#include "scripts/pokemon/gloom_by_mighty355d7j1sn7_compressed.h"
+#include "scripts/pokemon/132_compressed.h"
+#include "scripts/pokemon/055Golduck_Dream_compressed.h"
+#include "scripts/pokemon/Patamon_t_compressed.h"
+#include "scripts/pokemon/046Paras_Dream_compressed.h"
+#include "scripts/pokemon/143Snorlax_OS_anime_compressed.h"
+#include "scripts/pokemon/43Oddish_compressed.h"
+#include "scripts/pokemon/024_compressed.h"
+#include "scripts/pokemon/psyduck_compressed.h"
+#include "scripts/pokemon/090_shellder_by_tails19950d4awdd2_compressed.h"
+#include "scripts/pokemon/Gengar_compressed.h"
+//#include "scripts/pokemon/Gastly_compressed.h"
 
 char* pointer_mux;
 //char* pointer_mux[2];
@@ -29,7 +70,7 @@ char* pointer_mux;
 // enough.
 #define NUM_PIXELS 144
 #define PIXEL_BUFFER_SIZE ((NUM_PIXELS*4) + 8)
-#define IMAGE_NUM 2
+#define IMAGE_NUM 40
 
 // Number of frames in an image
 #define NUM_FRAME 512
@@ -314,7 +355,7 @@ void extract(char compressed_image[]) {
 void populate_rect(int image_num)  {
 // char* ptr = (char*)frames[image_num];
 
-	if (image_num == 0){
+//	if (image_num == 0){
 		pointer_mux = header_data1;
 	}
 	else{
@@ -357,12 +398,126 @@ void rect_to_polar(int polar_buffer_num){
 
 void animation_init(int image_num) {
 	if (image_num == 0){
-		pointer_mux = header_data_compressed1;
+		pointer_mux = header_data_compressed_squirtle;
 	}
-	else{
-		pointer_mux = header_data_compressed2;
+	else if (image_num == 1){
+		pointer_mux = header_data_compressed_001Bulbasaur_Dream;
 	}
-	extract(pointer_mux);
+	else if (image_num == 2){
+		pointer_mux = header_data_compressed_158Totodile_OS_anime;
+	}
+	else if (image_num == 3){
+		pointer_mux = header_data_compressed_2100ShinyVoltorb;
+	}
+	else if (image_num == 4){
+		pointer_mux = header_data_compressed_pichu_by_mighty355d7cwjv7;
+	}
+	else if (image_num == 5){
+		pointer_mux = header_data_compressed_311Plusle_AG_anime_2;
+	}
+	else if (image_num == 6){
+		pointer_mux = header_data_compressed_083Farfetchd_Dream;
+	}
+	else if (image_num == 7){
+		pointer_mux = header_data_compressed_124Jynx;
+	}
+	else if (image_num == 8){
+		pointer_mux = header_data_compressed_010Caterpie_Dream;		
+	}
+	else if (image_num == 9){
+		pointer_mux = header_data_compressed_613px006Charizard_Dream;
+	}
+	else if (image_num == 10){
+		pointer_mux = header_data_compressed_Charmander265x300;
+	}
+	else if (image_num == 11){
+		pointer_mux = header_data_compressed_hitmonlee_by_mighty355d7f7yqw;
+	}
+	else if (image_num == 12){
+		pointer_mux = header_data_compressed_013Weedle_Dream;
+	}
+	else if (image_num == 13){
+		pointer_mux = header_data_compressed_024;
+	}
+	else if (image_num == 14){
+		pointer_mux = header_data_compressed_pikachu;
+	}
+	else if (image_num == 15){
+		pointer_mux = header_data_compressed_063;
+	}
+	else if (image_num == 16){
+		pointer_mux = header_data_compressed_93Haunter;
+	}
+	else if (image_num == 17){
+		pointer_mux = header_data_compressed_5e7;
+	}
+	else if (image_num == 18){
+		pointer_mux = header_data_compressed_258Mudkip_AG_anime_2;
+	}
+	else if (image_num == 19){
+		pointer_mux = header_data_compressed_minum_by_kinlinkd3leo5p;
+	}
+	else if (image_num == 20){
+		pointer_mux = header_data_compressed_077Ponyta_Dream;
+	}
+	else if (image_num == 21){
+		pointer_mux = header_data_compressed_enhanced1938714483146278;
+	}
+	else if (image_num == 22){
+		pointer_mux = header_data_compressed_079Slowpoke_Dream;
+	}
+	else if (image_num == 23){
+		pointer_mux = header_data_compressed_vulpix;
+	}
+	else if (image_num == 24){
+		pointer_mux = header_data_compressed_255_torchic_by_pklucariod5z1jk7;
+	}
+	else if (image_num == 25){
+		pointer_mux = header_data_compressed_250px150Mewtwo;
+	}
+	else if (image_num == 26){
+		pointer_mux = header_data_compressed_155Cyndaquil_OS_anime_2;
+	}
+	else if (image_num == 27){
+		pointer_mux = header_data_compressed_Poke_mew;
+	}
+	else if (image_num == 28){
+		pointer_mux = header_data_compressed_gloom_by_mighty355d7j1sn7;
+	}
+	else if (image_num == 29){
+		pointer_mux = header_data_compressed_132;
+	}
+	else if (image_num == 30){
+		pointer_mux = header_data_compressed_055Golduck_Dream;
+	}
+	else if (image_num == 31){
+		pointer_mux = header_data_compressed_Patamon_t;
+	}
+	else if (image_num == 32){
+		pointer_mux = header_data_compressed_046Paras_Dream;
+	}
+	else if (image_num == 33){
+		pointer_mux = header_data_compressed_143Snorlax_OS_anime;
+	}
+	else if (image_num == 34){
+		pointer_mux = header_data_compressed_43Oddish;
+	}
+	else if (image_num == 35){
+		pointer_mux = header_data_compressed_Lugia;
+	}
+	else if (image_num == 36){
+		pointer_mux = header_data_compressed_psyduck;
+	}
+	else if (image_num == 37){
+		pointer_mux = header_data_compressed_090_shellder_by_tails19950d4awdd2;
+	}
+	else if (image_num == 38){
+		pointer_mux = header_data_compressed_Gengar;
+	}
+/*	else if (image_num == 39){
+		pointer_mux = header_data_compressed_Gastly;
+	}
+*/	extract(pointer_mux);
 //	populate_rect(image_num);
 
 /* Not really needed for full 100x100 images
