@@ -1,3 +1,5 @@
+# This script needs to be copied into the Python-fu console of GIMP. It will export all the .bmp images
+# of a directory into .h files.
 import glob
 import os
 if os.getcwd() != "/home/user/Desktop/PokemonIMG/Vibrant":

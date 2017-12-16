@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+# Usage "./addimages.py main.c"
+# This script will modify main.c to add the various compressed images into the build by adding the proper
+# include statements and proper arrays call outs in the method that extracts the images. 
+
 import fnmatch
 import os
 import sys

@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
-#Currently you can only have up to 2^13-1 iterations of the same color for compression to be properly stoed
-#This is roughly 4000
+#Usage "./compress.py image.h"
+#Takes the .h file exported from gimp and implements run-length encoding to compress the image.
+#Basically, the script reads through the char array four bytes at a time (four bytes represents the 
+#color of the pixel) and will store the number of iterations associated with the pixel color if it repeats
+#along a row of the image. Colors that are not repeated are just stored without an iteration count.
+#Iteration counts are delimited with a " " so that when the extract function parses through the compressed #char array, the extract function knows how to discern between a color and an iteration count.
+
 
 import sys
 f = open(sys.argv[1],"r")
